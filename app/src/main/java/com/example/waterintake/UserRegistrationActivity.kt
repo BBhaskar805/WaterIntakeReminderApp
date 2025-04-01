@@ -1,8 +1,10 @@
 package com.example.waterintake
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.database.FirebaseDatabase
 
 class UserRegistrationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -235,7 +238,34 @@ fun UserRegistrationActivityScreen() {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { /* Handle login */ },
+                    onClick = {
+                        when {
+                            patientEmail.isEmpty() -> {
+                                Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            }
+                            patientFN.isEmpty() -> {
+                                Toast.makeText(context, " Please Enter Name", Toast.LENGTH_SHORT).show()
+                            }
+
+                            patientAge.isEmpty() -> {
+                                Toast.makeText(context, " Please Enter Age", Toast.LENGTH_SHORT).show()
+                            }
+                            patientPass.isEmpty() -> {
+                                Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT).show()
+                            }
+
+                            else -> {
+                                val userData = UserData(
+                                    patientFN,
+                                    patientEmail,
+                                    patientAge,
+                                    patientPass
+                                )
+                                registerUser(userData,context);
+                            }
+
+                        }
+                    },
                     modifier = Modifier
                         .width(200.dp)
                         .align(Alignment.CenterHorizontally),
@@ -278,3 +308,39 @@ fun UserRegistrationActivityScreen() {
         }
     }
 }
+
+fun registerUser(userData: UserData, context: Context) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("UserData")
+
+    databaseReference.child(userData.emailid.replace(".", ","))
+        .setValue(userData)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
+                    .show()
+
+            } else {
+                Toast.makeText(
+                    context,
+                    "Registration Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        .addOnFailureListener { _ ->
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+}
+
+data class UserData(
+    var name : String = "",
+    var emailid : String = "",
+    var area : String = "",
+    var password: String = ""
+)

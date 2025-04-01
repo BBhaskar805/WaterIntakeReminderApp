@@ -1,8 +1,10 @@
 package com.example.waterintake
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.database.FirebaseDatabase
 
 class AccessActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,7 +171,30 @@ fun AccessActivityScreen() {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { /* Handle login */ },
+                    onClick = {
+                        when {
+                            patientEmail.isEmpty() -> {
+                                Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            }
+
+                            patientPassword.isEmpty() -> {
+                                Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+
+                            else -> {
+                                val userData = UserData(
+                                    "",
+                                    patientEmail,
+                                    "",
+                                    patientPassword
+                                )
+
+                                userAccountAccess(userData,context)
+                            }
+
+                        }
+                    },
                     modifier = Modifier
                         .width(200.dp)
                         .align(Alignment.CenterHorizontally),
@@ -214,5 +240,35 @@ fun AccessActivityScreen() {
 
             }
         }
+    }
+}
+
+fun userAccountAccess(userData: UserData, context: Context) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("UserData").child(userData.emailid.replace(".", ","))
+
+    databaseReference.get().addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val dbData = task.result?.getValue(UserData::class.java)
+            if (dbData != null) {
+                if (dbData.password == userData.password) {
+
+                    Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    Toast.makeText(context, "Seems Incorrect Credentials", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Your account not found", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
     }
 }
