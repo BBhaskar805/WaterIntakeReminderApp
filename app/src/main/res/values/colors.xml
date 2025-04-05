@@ -10,4 +10,10 @@
 
     <color name="color_deep_blue">#00246B</color>
     <color name="color_light_sky_blue">#CADCFC</color>
+
+    <color name="SkyBlue">#8AAAE5</color>
+    <color name="PureWhite">#FFFFFF</color>
+
+    <color name="white_50">#80FFFFFF</color>
+
 </resources>

@@ -254,6 +254,8 @@ fun userAccountAccess(userData: UserData, context: Context) {
             if (dbData != null) {
                 if (dbData.password == userData.password) {
 
+                    context.startActivity(Intent(context, HomeActivity::class.java))
+
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
 
                 } else {
