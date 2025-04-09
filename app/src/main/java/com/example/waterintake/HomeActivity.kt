@@ -150,7 +150,7 @@ fun HomeScreen() {
             bgImage = R.drawable.water_intake_img,
             title = "Create Goal",
             onClick = {
-//                context.startActivity(Intent(context, AccessActivity::class.java))
+                context.startActivity(Intent(context, CreateGoalActivity::class.java))
             }
         )
         ItemCard(
