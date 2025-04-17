@@ -48,7 +48,15 @@ fun EntryScreenMA() {
     LaunchedEffect(Unit) {
         delay(3000)
 
-        context.startActivity(Intent(context, AccessActivity::class.java))
+
+        val currentStatus = WaterIntakeData.readLS(context)
+
+        if(currentStatus)
+        {
+            context.startActivity(Intent(context, HomeActivity::class.java))
+        }else{
+            context.startActivity(Intent(context, AccessActivity::class.java))
+        }
 
 
     }

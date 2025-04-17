@@ -254,6 +254,10 @@ fun userAccountAccess(userData: UserData, context: Context) {
             if (dbData != null) {
                 if (dbData.password == userData.password) {
 
+                    WaterIntakeData.writeLS(context, true)
+                    WaterIntakeData.writeMail(context, dbData.emailid)
+                    WaterIntakeData.writeUserName(context, dbData.name)
+
                     context.startActivity(Intent(context, HomeActivity::class.java))
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()

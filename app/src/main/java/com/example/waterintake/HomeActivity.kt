@@ -164,7 +164,7 @@ fun HomeScreen() {
             bgImage = R.drawable.water_intake_img,
             title = "View Summary",
             onClick = {
-
+                context.startActivity(Intent(context, SummaryActivity::class.java))
             }
         )
         ItemCard(
