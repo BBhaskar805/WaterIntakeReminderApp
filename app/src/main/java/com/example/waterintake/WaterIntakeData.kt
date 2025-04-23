@@ -38,5 +38,27 @@ object WaterIntakeData {
         return userLogin.getString("USERMAIL", "")!!
     }
 
+    fun writePhoto(context: Context, value: String) {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        val editor = userLogin.edit()
+        editor.putString("USERPHOTO", value).apply()
+    }
+
+    fun readPhoto(context: Context): String {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        return userLogin.getString("USERPHOTO", "")!!
+    }
+
+    fun writeDailyGoal(context: Context, value: Float) {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        val editor = userLogin.edit()
+        editor.putFloat("DAILY_GOAL", value).apply()
+    }
+
+    fun readDailyGoal(context: Context): Float {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        return userLogin.getFloat("DAILY_GOAL", 0f)
+    }
+
 
 }

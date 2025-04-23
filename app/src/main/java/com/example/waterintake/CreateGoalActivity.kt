@@ -3,7 +3,6 @@ package com.example.waterintake
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -187,7 +187,6 @@ fun WaterConsumptionEntryScreen() {
     }
 
 
-
 }
 
 @Composable
@@ -195,6 +194,8 @@ fun WaterGoalSettingScreen() {
     var weight by remember { mutableStateOf("") }
     var activityLevel by remember { mutableStateOf("") }
     var customGoal by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -233,7 +234,12 @@ fun WaterGoalSettingScreen() {
             modifier = Modifier.padding(horizontal = 12.dp)
         ) {
 
-
+            Text(
+                text = "Current Goal : ${WaterIntakeData.readDailyGoal(context)}",
+                style = MaterialTheme.typography.titleSmall,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            )
 
             OutlinedTextField(
                 value = weight,
@@ -261,6 +267,7 @@ fun WaterGoalSettingScreen() {
             Button(
                 onClick = {
                     // Handle goal saving logic here
+                    WaterIntakeData.writeDailyGoal(context = context, customGoal.toFloat())
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {

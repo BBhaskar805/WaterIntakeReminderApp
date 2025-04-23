@@ -1,17 +1,26 @@
 package com.example.waterintake
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,7 +31,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -47,9 +58,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.database.FirebaseDatabase
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class UserRegistrationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +90,8 @@ fun UserRegistrationActivityScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.color_deep_blue))
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -129,6 +147,8 @@ fun UserRegistrationActivityScreen() {
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.color_light_sky_blue))
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
+
+                UploadDonorImage()
 
 
                 Text(
@@ -255,13 +275,30 @@ fun UserRegistrationActivityScreen() {
                             }
 
                             else -> {
+
+                                val inputStream =
+                                    context.contentResolver.openInputStream(DonorPhoto.selImageUri)
+                                val bitmap = BitmapFactory.decodeStream(inputStream)
+                                val outputStream = ByteArrayOutputStream()
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                                val base64Image =
+                                    Base64.encodeToString(
+                                        outputStream.toByteArray(),
+                                        Base64.DEFAULT
+                                    )
+
+//                                donorFormData.imageUrl = base64Image
+
                                 val userData = UserData(
                                     patientFN,
                                     patientEmail,
                                     patientAge,
-                                    patientPass
+                                    patientPass,
+                                    base64Image
                                 )
                                 registerUser(userData,context);
+
+
                             }
 
                         }
@@ -320,6 +357,8 @@ fun registerUser(userData: UserData, context: Context) {
             if (task.isSuccessful) {
                 Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
                     .show()
+                context.startActivity(Intent(context, AccessActivity::class.java))
+                (context as Activity).finish()
 
             } else {
                 Toast.makeText(
@@ -342,5 +381,87 @@ data class UserData(
     var name : String = "",
     var emailid : String = "",
     var area : String = "",
-    var password: String = ""
+    var password: String = "",
+    var imageUrl: String = ""
 )
+
+@Composable
+fun UploadDonorImage() {
+    val activityContext = LocalContext.current
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val captureImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                imageUri = getImageUri(activityContext)
+                DonorPhoto.selImageUri = imageUri as Uri
+                DonorPhoto.isImageSelected=true
+            } else {
+                DonorPhoto.isImageSelected=false
+                Toast.makeText(activityContext, "Capture Failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                Toast.makeText(activityContext, "Permission Granted", Toast.LENGTH_SHORT).show()
+                captureImageLauncher.launch(getImageUri(activityContext)) // Launch the camera
+            } else {
+                Toast.makeText(activityContext, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
+    Column(
+        modifier = Modifier.size(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = if (imageUri != null) {
+                rememberAsyncImagePainter(model = imageUri)
+            } else {
+                painterResource(id = R.drawable.ic_add_image)
+            },
+            contentDescription = "Captured Image",
+            modifier = Modifier
+                .width(100.dp)
+                .height(100.dp)
+                .clickable {
+                    if (ContextCompat.checkSelfPermission(
+                            activityContext,
+                            Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        captureImageLauncher.launch(getImageUri(activityContext))
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        if (imageUri == null) {
+            Text(text = "Tap the image to capture")
+        }
+    }
+}
+
+fun getImageUri(activityContext: Context): Uri {
+    val file = File(activityContext.filesDir, "captured_image.jpg")
+    return FileProvider.getUriForFile(
+        activityContext,
+        "${activityContext.packageName}.fileprovider",
+        file
+    )
+}
+
+
+object DonorPhoto {
+    lateinit var selImageUri: Uri
+    var isImageSelected = false
+}

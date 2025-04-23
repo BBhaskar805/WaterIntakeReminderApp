@@ -257,6 +257,9 @@ fun userAccountAccess(userData: UserData, context: Context) {
                     WaterIntakeData.writeLS(context, true)
                     WaterIntakeData.writeMail(context, dbData.emailid)
                     WaterIntakeData.writeUserName(context, dbData.name)
+                    WaterIntakeData.writePhoto(context,dbData.imageUrl)
+
+
 
                     context.startActivity(Intent(context, HomeActivity::class.java))
 

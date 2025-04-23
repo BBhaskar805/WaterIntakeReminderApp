@@ -155,9 +155,9 @@ fun HomeScreen() {
         )
         ItemCard(
             bgImage = R.drawable.water_intake_img,
-            title = "Track Entries",
+            title = "Add Consumption",
             onClick = {
-
+                context.startActivity(Intent(context, AddConsumationActivity::class.java))
             }
         )
         ItemCard(
@@ -171,6 +171,8 @@ fun HomeScreen() {
             bgImage = R.drawable.water_intake_img,
             title = "Manage Profile",
             onClick = {
+                context.startActivity(Intent(context, ManageProfileActivity::class.java))
+
 
             }
         )
