@@ -1,5 +1,6 @@
 package com.example.waterintake
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -9,6 +10,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,9 +19,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -90,6 +97,7 @@ fun WaterInputScreen(viewModel: WaterViewModel) {
                     .width(36.dp)
                     .height(36.dp)
                     .clickable {
+                        (context as Activity).finish()
                     }
             )
 
@@ -121,18 +129,74 @@ fun WaterInputScreen(viewModel: WaterViewModel) {
             Spacer(Modifier.height(8.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(
-                    modifier = Modifier.weight(1f),
-                    onClick = { datePicker.show() }) { Text(if (date.isEmpty()) "Pick Date" else "Date: $date") }
 
-                Spacer(modifier = Modifier.width(12.dp))
-                Button(
-                    modifier = Modifier.weight(1f),
-                    onClick = { timePicker.show() }) { Text(if (time.isEmpty()) "Pick Time" else "Time: $time") }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 8.dp)
+                        .height(50.dp)
+                        .clickable {
+                            // Handle the click event, e.g., show a date picker
+                        }
+                        .background(Color.LightGray, MaterialTheme.shapes.medium)
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = date.ifEmpty { "Date" },
+                        color = if (date.isEmpty()) Color.Gray else Color.Black
+                    )
+                    Icon(
+                        imageVector = Icons.Default.DateRange, // Replace with your desired icon
+                        contentDescription = "Calendar Icon",
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(24.dp)
+                            .clickable {
+                                datePicker.show()
+                            },
+                        tint = Color.DarkGray
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 8.dp)
+                        .height(50.dp)
+                        .clickable {
+                            // Handle the click event, e.g., show a date picker
+                        }
+                        .background(Color.LightGray, MaterialTheme.shapes.medium)
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = time.ifEmpty { "Time" },
+                        color = if (time.isEmpty()) Color.Gray else Color.Black
+                    )
+                    Icon(
+                        imageVector = Icons.Default.DateRange, // Replace with your desired icon
+                        contentDescription = "Calendar Icon",
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(24.dp)
+                            .clickable {
+                                timePicker.show()
+                            },
+                        tint = Color.DarkGray
+                    )
+                }
 
             }
+
 
             Spacer(Modifier.height(16.dp))
 
@@ -141,10 +205,12 @@ fun WaterInputScreen(viewModel: WaterViewModel) {
                 onClick = {
                     if (amount.isNotEmpty() && date.isNotEmpty() && time.isNotEmpty()) {
                         viewModel.insert(amount.toInt(), date, time)
-                        Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
                         amount = ""
                         date = ""
                         time = ""
+
+                        Toast.makeText(context, "Added Successfully", Toast.LENGTH_SHORT).show()
+                        (context as Activity).finish()
                     }
                 }
             ) {

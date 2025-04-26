@@ -49,7 +49,7 @@ fun EntryScreenMA() {
         delay(3000)
 
 
-        val currentStatus = WaterIntakeData.readLS(context)
+        val currentStatus = HydrationPrefs.isUserLoggedIn(context)
 
         if(currentStatus)
         {

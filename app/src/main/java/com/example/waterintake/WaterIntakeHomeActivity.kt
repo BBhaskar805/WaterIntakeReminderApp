@@ -3,8 +3,6 @@ package com.example.waterintake
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class WaterIntakeHomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +38,7 @@ fun WaterIntakeHome() {
     ) {
 
         Row {
-            Image(painter = painterResource(id = R.drawable.water_intake), contentDescription ="" )
+            Image(painter = painterResource(id = R.drawable.water_intake), contentDescription = "")
         }
     }
 }

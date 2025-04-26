@@ -12,7 +12,7 @@ interface WaterDao {
     suspend fun insertEntry(entry: WaterEntry)
 
     @Query("SELECT * FROM water_entries ORDER BY date DESC, time DESC")
-    fun getAllEntries(): Flow<List<WaterEntry>>
+    fun getAllEntriesOld(): Flow<List<WaterEntry>>
 
     @Query("""
         SELECT * FROM water_entries
@@ -20,4 +20,8 @@ interface WaterDao {
         ORDER BY date ASC
     """)
     fun getLastSevenDaysEntries(): Flow<List<WaterEntry>>
+
+    @Query("SELECT * FROM water_entries ORDER BY date")
+    fun getAllEntries(): Flow<List<WaterEntry>>
+
 }

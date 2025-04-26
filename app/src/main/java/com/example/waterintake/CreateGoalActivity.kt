@@ -1,6 +1,8 @@
 package com.example.waterintake
 
+import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -217,6 +219,7 @@ fun WaterGoalSettingScreen() {
                     .width(36.dp)
                     .height(36.dp)
                     .clickable {
+                        (context as Activity).finish()
                     }
             )
 
@@ -235,7 +238,7 @@ fun WaterGoalSettingScreen() {
         ) {
 
             Text(
-                text = "Current Goal : ${WaterIntakeData.readDailyGoal(context)}",
+                text = "Current Goal : ${HydrationPrefs.getDailyWaterGoal(context)}",
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold
@@ -266,8 +269,9 @@ fun WaterGoalSettingScreen() {
 
             Button(
                 onClick = {
-                    // Handle goal saving logic here
-                    WaterIntakeData.writeDailyGoal(context = context, customGoal.toFloat())
+                    HydrationPrefs.setDailyWaterGoal(context = context, customGoal.toFloat())
+                    Toast.makeText(context, "Goal Saved Successfully", Toast.LENGTH_SHORT).show()
+                    (context as Activity).finish()
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {

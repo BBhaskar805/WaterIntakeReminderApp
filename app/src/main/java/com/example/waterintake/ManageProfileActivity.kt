@@ -1,5 +1,6 @@
 package com.example.waterintake
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -66,6 +67,7 @@ fun ProfileScreen() {
                     .width(36.dp)
                     .height(36.dp)
                     .clickable {
+                        (context as Activity).finish()
                     }
             )
 
@@ -87,7 +89,7 @@ fun ProfileScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            val userProfilePic= WaterIntakeData.readPhoto(context = context)
+            val userProfilePic = HydrationPrefs.getProfilePhotoUrl(context = context)
 
             Spacer(modifier = Modifier.height(36.dp))
 
@@ -105,7 +107,7 @@ fun ProfileScreen() {
             Spacer(modifier = Modifier.height(36.dp))
 
             Text(
-                text = WaterIntakeData.readUserName(context),
+                text = HydrationPrefs.getProfileName(context),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold
@@ -114,7 +116,7 @@ fun ProfileScreen() {
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = WaterIntakeData.readMail(context),
+                text = HydrationPrefs.getProfileName(context),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold

@@ -62,8 +62,8 @@ class AccessActivity : ComponentActivity() {
 
 @Composable
 fun AccessActivityScreen() {
-    var patientEmail by remember { mutableStateOf("") }
-    var patientPassword by remember { mutableStateOf("") }
+    var hydraEmail by remember { mutableStateOf("") }
+    var hydraPassword by remember { mutableStateOf("") }
 
     val context = LocalContext.current as Activity
 
@@ -139,8 +139,8 @@ fun AccessActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = patientEmail,
-                    onValueChange = { patientEmail = it },
+                    value = hydraEmail,
+                    onValueChange = { hydraEmail = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -160,8 +160,8 @@ fun AccessActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = patientPassword,
-                    onValueChange = { patientPassword = it },
+                    value = hydraPassword,
+                    onValueChange = { hydraPassword = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -173,21 +173,21 @@ fun AccessActivityScreen() {
                 Button(
                     onClick = {
                         when {
-                            patientEmail.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            hydraEmail.isEmpty() -> {
+                                Toast.makeText(context, "Uh-oh! Email field can’t be empty", Toast.LENGTH_SHORT).show()
                             }
 
-                            patientPassword.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+                            hydraPassword.isEmpty() -> {
+                                Toast.makeText(context, "Uh-oh! Password field can’t be empty", Toast.LENGTH_SHORT)
                                     .show()
                             }
 
                             else -> {
                                 val userData = UserData(
                                     "",
-                                    patientEmail,
+                                    hydraEmail,
                                     "",
-                                    patientPassword
+                                    hydraPassword
                                 )
 
                                 userAccountAccess(userData,context)
@@ -254,15 +254,15 @@ fun userAccountAccess(userData: UserData, context: Context) {
             if (dbData != null) {
                 if (dbData.password == userData.password) {
 
-                    WaterIntakeData.writeLS(context, true)
-                    WaterIntakeData.writeMail(context, dbData.emailid)
-                    WaterIntakeData.writeUserName(context, dbData.name)
-                    WaterIntakeData.writePhoto(context,dbData.imageUrl)
+                    HydrationPrefs.setUserLoggedIn(context, true)
+                    HydrationPrefs.setProfileEmail(context, dbData.emailid)
+                    HydrationPrefs.setProfileName(context, dbData.name)
+                    HydrationPrefs.setProfilePhotoUrl(context,dbData.imageUrl)
 
 
 
                     context.startActivity(Intent(context, HomeActivity::class.java))
-
+                    (context as Activity).finish()
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
 
                 } else {

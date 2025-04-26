@@ -78,11 +78,11 @@ class UserRegistrationActivity : ComponentActivity() {
 
 @Composable
 fun UserRegistrationActivityScreen() {
-    var patientFN by remember { mutableStateOf("") }
-    var patientAge by remember { mutableStateOf("") }
-    var patientEmail by remember { mutableStateOf("") }
-    var patientPass by remember { mutableStateOf("") }
-    var confirmPass by remember { mutableStateOf("") }
+    var hydraFullName by remember { mutableStateOf("") }
+    var hydraAge by remember { mutableStateOf("") }
+    var hydraEmail by remember { mutableStateOf("") }
+    var hydraPassword by remember { mutableStateOf("") }
+    var hydraConfirmPassword by remember { mutableStateOf("") }
 
     val context = LocalContext.current as Activity
 
@@ -148,7 +148,7 @@ fun UserRegistrationActivityScreen() {
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
 
-                UploadDonorImage()
+                UploadUserImage()
 
 
                 Text(
@@ -162,8 +162,8 @@ fun UserRegistrationActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = patientFN,
-                    onValueChange = { patientFN = it },
+                    value = hydraFullName,
+                    onValueChange = { hydraFullName = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -182,8 +182,8 @@ fun UserRegistrationActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = patientAge,
-                    onValueChange = { patientAge = it },
+                    value = hydraAge,
+                    onValueChange = { hydraAge = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -205,8 +205,8 @@ fun UserRegistrationActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = patientEmail,
-                    onValueChange = { patientEmail = it },
+                    value = hydraEmail,
+                    onValueChange = { hydraEmail = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -226,8 +226,8 @@ fun UserRegistrationActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = patientPass,
-                    onValueChange = { patientPass = it },
+                    value = hydraPassword,
+                    onValueChange = { hydraPassword = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -247,8 +247,8 @@ fun UserRegistrationActivityScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    value = confirmPass,
-                    onValueChange = { confirmPass = it },
+                    value = hydraConfirmPassword,
+                    onValueChange = { hydraConfirmPassword = it },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
@@ -260,24 +260,24 @@ fun UserRegistrationActivityScreen() {
                 Button(
                     onClick = {
                         when {
-                            patientEmail.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            hydraEmail.isEmpty() -> {
+                                Toast.makeText(context, "Uh-oh! Email field can’t be empty", Toast.LENGTH_SHORT).show()
                             }
-                            patientFN.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Name", Toast.LENGTH_SHORT).show()
+                            hydraFullName.isEmpty() -> {
+                                Toast.makeText(context, " Uh-oh! FullName field can’t be empty", Toast.LENGTH_SHORT).show()
                             }
 
-                            patientAge.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Age", Toast.LENGTH_SHORT).show()
+                            hydraAge.isEmpty() -> {
+                                Toast.makeText(context, "Uh-oh! Age field can’t be empty", Toast.LENGTH_SHORT).show()
                             }
-                            patientPass.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT).show()
+                            hydraPassword.isEmpty() -> {
+                                Toast.makeText(context, "Uh-oh! Password field can’t be empty", Toast.LENGTH_SHORT).show()
                             }
 
                             else -> {
 
                                 val inputStream =
-                                    context.contentResolver.openInputStream(DonorPhoto.selImageUri)
+                                    context.contentResolver.openInputStream(UserPhotoData.selImageUri)
                                 val bitmap = BitmapFactory.decodeStream(inputStream)
                                 val outputStream = ByteArrayOutputStream()
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -290,10 +290,10 @@ fun UserRegistrationActivityScreen() {
 //                                donorFormData.imageUrl = base64Image
 
                                 val userData = UserData(
-                                    patientFN,
-                                    patientEmail,
-                                    patientAge,
-                                    patientPass,
+                                    hydraFullName,
+                                    hydraEmail,
+                                    hydraAge,
+                                    hydraPassword,
                                     base64Image
                                 )
                                 registerUser(userData,context);
@@ -320,7 +320,7 @@ fun UserRegistrationActivityScreen() {
                     )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -386,7 +386,7 @@ data class UserData(
 )
 
 @Composable
-fun UploadDonorImage() {
+fun UploadUserImage() {
     val activityContext = LocalContext.current
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -396,10 +396,10 @@ fun UploadDonorImage() {
         onResult = { success ->
             if (success) {
                 imageUri = getImageUri(activityContext)
-                DonorPhoto.selImageUri = imageUri as Uri
-                DonorPhoto.isImageSelected=true
+                UserPhotoData.selImageUri = imageUri as Uri
+                UserPhotoData.isImageSelected=true
             } else {
-                DonorPhoto.isImageSelected=false
+                UserPhotoData.isImageSelected=false
                 Toast.makeText(activityContext, "Capture Failed", Toast.LENGTH_SHORT).show()
             }
         }
@@ -418,7 +418,7 @@ fun UploadDonorImage() {
     )
 
     Column(
-        modifier = Modifier.size(100.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -461,7 +461,7 @@ fun getImageUri(activityContext: Context): Uri {
 }
 
 
-object DonorPhoto {
+object UserPhotoData {
     lateinit var selImageUri: Uri
     var isImageSelected = false
 }

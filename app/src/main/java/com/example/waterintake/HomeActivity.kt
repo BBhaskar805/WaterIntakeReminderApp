@@ -5,10 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -48,11 +50,10 @@ class HomeActivity : ComponentActivity() {
 
 
 @Composable
-fun ItemCard(bgImage: Int, title: String, onClick: (title: String) -> Unit) {
+fun ItemCard(bgImage: Int, title: String, onClick: (title: String) -> Unit, modifier: Modifier) {
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(8.dp)
             .clickable {
                 onClick.invoke(title)
@@ -86,7 +87,7 @@ fun ItemCard(bgImage: Int, title: String, onClick: (title: String) -> Unit) {
             Text(
                 text = title,
                 color = Color.Black, // Set the base text color
-                fontSize = 32.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -104,7 +105,11 @@ fun HomeScreen() {
 
     val context = LocalContext.current as Activity
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
 
         Row(
             modifier = Modifier
@@ -138,44 +143,147 @@ fun HomeScreen() {
                     .clickable {
                         // Navigate to LoginActivity when clicked
 
-//                        val intent = Intent(context, AccessActivity::class.java)
-//                        context.startActivity(intent)
-//                        context.finish()
+                        HydrationPrefs.setUserLoggedIn(context, false)
+
+                        val intent = Intent(context, AccessActivity::class.java)
+                        context.startActivity(intent)
+                        context.finish()
                     }
                     .padding(start = 8.dp) // Optional spacing // Optional spacin
             )
         }
 
-        ItemCard(
-            bgImage = R.drawable.water_intake_img,
-            title = "Create Goal",
-            onClick = {
-                context.startActivity(Intent(context, CreateGoalActivity::class.java))
-            }
-        )
-        ItemCard(
-            bgImage = R.drawable.water_intake_img,
-            title = "Add Consumption",
-            onClick = {
-                context.startActivity(Intent(context, AddConsumationActivity::class.java))
-            }
-        )
-        ItemCard(
-            bgImage = R.drawable.water_intake_img,
-            title = "View Summary",
-            onClick = {
-                context.startActivity(Intent(context, SummaryActivity::class.java))
-            }
-        )
-        ItemCard(
-            bgImage = R.drawable.water_intake_img,
-            title = "Manage Profile",
-            onClick = {
-                context.startActivity(Intent(context, ManageProfileActivity::class.java))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            ItemCard(
+                bgImage = R.drawable.water_intake_img,
+                title = "Create Goal",
+                onClick = {
+                    context.startActivity(Intent(context, CreateGoalActivity::class.java))
+                },
+                Modifier.weight(1f)
+            )
+            ItemCard(
+                bgImage = R.drawable.water_intake_img,
+                title = "Add Consumption",
+                onClick = {
+                    context.startActivity(Intent(context, AddConsumationActivity::class.java))
+                },
+                Modifier.weight(1f)
 
+            )
+        }
 
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            ItemCard(
+                bgImage = R.drawable.water_intake_img,
+                title = "This Week",
+                onClick = {
+                    context.startActivity(Intent(context, SummaryActivity::class.java))
+                },
+                Modifier.weight(1f)
+
+            )
+
+            ItemCard(
+                bgImage = R.drawable.water_intake_img,
+                title = "Weekly Summary",
+                onClick = {
+                    context.startActivity(Intent(context, OverallActivity::class.java))
+                },
+                Modifier.weight(1f)
+
+            )
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            ItemCard(
+                bgImage = R.drawable.water_intake_img,
+                title = "Tips",
+                onClick = {
+                    context.startActivity(Intent(context, TipsActivity::class.java))
+                },
+                Modifier.weight(1f)
+
+            )
+
+            ItemCard(
+                bgImage = R.drawable.water_intake_img,
+                title = "Manage Profile",
+                onClick = {
+                    context.startActivity(Intent(context, ManageProfileActivity::class.java))
+                },
+                Modifier.weight(1f)
+
+            )
+        }
+
+        AboutAndContactScreen()
+    }
+}
+
+@Composable
+fun AboutAndContactScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // About Us Card
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "About Us",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = Color(0xFF558B2F)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Welcome to the Water Intake Reminder App – your daily companion for better hydration and a healthier lifestyle!\n\n" +
+                            "Developed by Bhaskar, this app is designed to help you stay on track with your water intake goals. " +
+                            "Whether you’re busy at work, on the go, or just need a gentle nudge to drink more water, our app is here to remind you " +
+                            "to stay refreshed and energized throughout the day.\n\n" +
+                            "At Water Intake Reminder, we believe that small habits lead to big changes. " +
+                            "Thanks for choosing us to support your health, one sip at a time!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black
+                )
             }
-        )
+        }
+
+        // Contact Us Card
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Contact Us",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = Color(0xFF1976D2)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Bhaskar",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+                )
+                Text(
+                    text = "Email: bhaskarbathuka1@gmail.com",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Student ID: S3463805",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
 }
 
