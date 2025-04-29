@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "712925793878",
+    "firebase_url": "https://waterintake-1784d-default-rtdb.firebaseio.com",
     "project_id": "waterintake-1784d",
     "storage_bucket": "waterintake-1784d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:712925793878:android:bb1214f2e6292417bdb5f7",
+        "mobilesdk_app_id": "1:712925793878:android:a54201d6ed1704b6bdb5f7",
         "android_client_info": {
-          "package_name": "com.example.waterintake"
+          "package_name": "student.bhaskarbathukas3463805.waterintake"
         }
       },
       "oauth_client": [],

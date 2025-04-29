@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.waterintake"
+    namespace = "student.bhaskarbathukas3463805.waterintake"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.waterintake"
+        applicationId = "student.bhaskarbathukas3463805.waterintake"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
